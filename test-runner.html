@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>CarbonSathi In-Browser Tests</title>
+    <style>
+      body {
+        font-family: monospace;
+        padding: 20px;
+        background: #1e1e1e;
+        color: #fff;
+      }
+      .pass {
+        color: #4caf50;
+      }
+      .fail {
+        color: #f44336;
+      }
+      h2 {
+        margin-top: 20px;
+        color: #ffeb3b;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>CarbonSathi Core Tests</h1>
+    <div id="results"></div>
+
+    <script type="module">
+      import {
+        normalizeInput,
+        calculateTransport,
+        calculateTotal,
+      } from "./assets/js/calculator.js";
+      import {
+        getTopCategory,
+        getTopRecommendations,
+      } from "./assets/js/recommendations.js";
+
+      const results = document.getElementById("results");
+
+      function assert(name, condition) {
+        const p = document.createElement("p");
+        if (condition) {
+          p.textContent = `✅ PASS: ${name}`;
+          p.className = "pass";
+        } else {
+          p.textContent = `❌ FAIL: ${name}`;
+          p.className = "fail";
+        }
+        results.appendChild(p);
+      }
+
+      function group(name) {
+        const h2 = document.createElement("h2");
+        h2.textContent = name;
+        results.appendChild(h2);
+      }
+
+      try {
+        group("Calculator - normalizeInput");
+        assert("Treats empty strings as 0", normalizeInput("") === 0);
+        assert("Rejects negative inputs", normalizeInput(-10) === 0);
+        assert("Respects maximum cap", normalizeInput(1000, 500) === 500);
+
+        group("Calculator - calculateTransport");
+        assert(
+          "Zero distance = zero emissions",
+          calculateTransport({ dailyDistanceKm: 0 }) === 0,
+        );
+        assert(
+          "Walking = zero emissions",
+          calculateTransport({
+            dailyDistanceKm: 10,
+            vehicleType: "walking",
+          }) === 0,
+        );
+
+        group("Calculator - calculateTotal");
+        const total = calculateTotal({
+          transport: { dailyDistanceKm: 10, vehicleType: "carPetrol" },
+          energy: { monthlyKwh: 100 },
+        });
+        assert("Calculates monthly total > 0", total.monthlyTotal > 0);
+        assert(
+          "Yearly total is 12x monthly",
+          total.yearlyTotal === total.monthlyTotal * 12,
+        );
+
+        group("Recommendations - getTopCategory");
+        assert(
+          "Finds highest category",
+          getTopCategory({ transport: 100, energy: 500 }) === "energy",
+        );
+
+        group("Recommendations - getTopRecommendations");
+        const recs = getTopRecommendations({
+          categories: { energy: 500 },
+          count: 1,
+        });
+        assert(
+          "Returns recommendations from top category",
+          recs.length > 0 && recs[0].category === "energy",
+        );
+      } catch (e) {
+        assert("Test Execution Error: " + e.message, false);
+        console.error(e);
+      }
+    </script>
+  </body>
+</html>

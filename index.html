@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CarbonSathi | Carbon Footprint Awareness</title>
+    <meta
+      name="description"
+      content="Understand, track, and reduce your carbon footprint with CarbonSathi's personalized AI assistant."
+    />
+    <link rel="stylesheet" href="assets/css/style.css" />
+  </head>
+  <body>
+    <!-- Header & Navigation -->
+    <header class="app-header">
+      <div class="app-header__logo">
+        <h1 data-i18n="appName">🌱 CarbonSathi</h1>
+      </div>
+      <nav aria-label="Main Navigation">
+        <ul class="nav__list">
+          <li>
+            <a
+              href="#home"
+              class="nav__link nav__link--active"
+              data-i18n="navHome"
+              >Home</a
+            >
+          </li>
+          <li>
+            <a href="#calculator" class="nav__link" data-i18n="navCalculator"
+              >Calculator</a
+            >
+          </li>
+          <li>
+            <a href="#dashboard" class="nav__link" data-i18n="navDashboard"
+              >Dashboard</a
+            >
+          </li>
+          <li>
+            <a
+              href="#recommendations"
+              class="nav__link"
+              data-i18n="navRecommendations"
+              >Actions</a
+            >
+          </li>
+          <li>
+            <a href="#challenges" class="nav__link" data-i18n="navChallenges"
+              >Challenges</a
+            >
+          </li>
+          <li>
+            <a href="#assistant" class="nav__link" data-i18n="navAssistant"
+              >Assistant</a
+            >
+          </li>
+        </ul>
+      </nav>
+      <div
+        class="app-header__controls"
+        style="display: flex; gap: 10px; align-items: center"
+      >
+        <select
+          id="language-selector"
+          aria-label="Language Selector"
+          data-i18n-aria="languageSelectorLabel"
+          style="padding: 0.25rem; border-radius: 4px"
+        >
+          <option value="en">English</option>
+          <option value="hi">हिंदी (Hindi)</option>
+          <option value="gu">ગુજરાતી (Gujarati)</option>
+          <option value="mr">मराठी (Marathi)</option>
+        </select>
+        <button
+          id="theme-toggle"
+          class="btn btn--small"
+          aria-label="Toggle Theme"
+          data-i18n-aria="themeToggleLabel"
+          style="
+            background: transparent;
+            border: 1px solid #ccc;
+            color: var(--color-text);
+          "
+        >
+          ☀️
+        </button>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <!-- Home Section -->
+      <section
+        id="home"
+        class="section section--active"
+        aria-labelledby="home-title"
+      >
+        <h2 id="home-title" data-i18n="tagline">Understand. Track. Reduce.</h2>
+        <p data-i18n="homeIntro">
+          CarbonSathi is your personal sustainability companion. Calculate your
+          carbon footprint and get simple, actionable tips to make a real
+          difference.
+        </p>
+        <a
+          href="#calculator"
+          class="btn"
+          onclick="
+            document.querySelector('.nav__link[href=\'#calculator\']').click();
+            return false;
+          "
+          data-i18n="calcStartBtn"
+          >Calculate My Footprint</a
+        >
+
+        <div class="card" style="margin-top: 2rem">
+          <h3 data-i18n="apiSettings">API Settings (Optional)</h3>
+          <p class="text-small" data-i18n="apiDesc">
+            CarbonSathi works offline, but you can add a Gemini API Key for
+            personalized AI advice.
+          </p>
+          <div style="display: flex; gap: 10px; margin-top: 10px">
+            <label for="api-key-input" class="sr-only" data-i18n="apiKeyLabel"
+              >Gemini API Key</label
+            >
+            <input
+              type="text"
+              id="api-key-input"
+              data-i18n-ph="apiPlaceholder"
+              placeholder="Enter Gemini API Key (session only)"
+            />
+            <button
+              id="save-api-key-btn"
+              class="btn btn--small"
+              data-i18n="apiSaveBtn"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Calculator Section -->
+      <section id="calculator" class="section" aria-labelledby="calc-title">
+        <h2 id="calc-title" data-i18n="calcTitle">Carbon Calculator</h2>
+        <form id="calc-form">
+          <div class="grid grid--2">
+            <!-- Transport -->
+            <div class="card">
+              <h3 data-i18n="calcTransportTitle">🚗 Transport</h3>
+              <div class="form-group">
+                <label for="dailyDistanceKm" data-i18n="calcDailyCommuteLabel"
+                  >Daily Commute (km, one way)</label
+                >
+                <input
+                  type="number"
+                  id="dailyDistanceKm"
+                  name="dailyDistanceKm"
+                  min="0"
+                  value="10"
+                />
+              </div>
+              <div class="form-group">
+                <label for="vehicleType" data-i18n="calcVehicleTypeLabel"
+                  >Primary Transport</label
+                >
+                <select id="vehicleType" name="vehicleType">
+                  <option value="carPetrol" data-i18n="optCarPetrol">
+                    Petrol Car
+                  </option>
+                  <option value="carDiesel" data-i18n="optCarDiesel">
+                    Diesel Car
+                  </option>
+                  <option value="carElectric" data-i18n="optCarElectric">
+                    Electric Car
+                  </option>
+                  <option value="publicBus" data-i18n="optPublicBus">
+                    Public Bus
+                  </option>
+                  <option value="metro" data-i18n="optMetro">
+                    Metro / Train
+                  </option>
+                  <option value="walking" data-i18n="optWalking">
+                    Walking / Cycling
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Energy -->
+            <div class="card">
+              <h3 data-i18n="calcEnergyTitle">⚡ Home Energy</h3>
+              <div class="form-group">
+                <label for="monthlyKwh" data-i18n="calcMonthlyKwhLabel"
+                  >Monthly Electricity (kWh)</label
+                >
+                <input
+                  type="number"
+                  id="monthlyKwh"
+                  name="monthlyKwh"
+                  min="0"
+                  value="250"
+                />
+              </div>
+            </div>
+
+            <!-- Food -->
+            <div class="card">
+              <h3 data-i18n="calcFoodTitle">🥗 Food</h3>
+              <div class="form-group">
+                <label for="dietType" data-i18n="calcDietTypeLabel"
+                  >Diet Type</label
+                >
+                <select id="dietType" name="dietType">
+                  <option value="omnivore" data-i18n="optOmnivore">
+                    Omnivore (Average Meat)
+                  </option>
+                  <option value="highMeat" data-i18n="optHighMeat">
+                    High Meat
+                  </option>
+                  <option value="pescatarian" data-i18n="optPescatarian">
+                    Pescatarian
+                  </option>
+                  <option value="vegetarian" data-i18n="optVegetarian">
+                    Vegetarian
+                  </option>
+                  <option value="vegan" data-i18n="optVegan">Vegan</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="foodWaste" data-i18n="calcFoodWasteLabel"
+                  >Food Waste</label
+                >
+                <select id="foodWaste" name="foodWaste">
+                  <option value="none" data-i18n="optWasteNone">None</option>
+                  <option value="low" data-i18n="optWasteLow">Low</option>
+                  <option value="medium" selected data-i18n="optWasteMedium">
+                    Medium
+                  </option>
+                  <option value="high" data-i18n="optWasteHigh">High</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Shopping -->
+            <div class="card">
+              <h3 data-i18n="calcShoppingTitle">🛍️ Shopping & Waste</h3>
+              <div class="form-group">
+                <label
+                  for="newClothingItemsPerMonth"
+                  data-i18n="calcNewClothesLabel"
+                  >New Clothes / Month</label
+                >
+                <input
+                  type="number"
+                  id="newClothingItemsPerMonth"
+                  name="newClothingItemsPerMonth"
+                  min="0"
+                  value="2"
+                />
+              </div>
+              <div class="form-group">
+                <label for="recyclingLevel" data-i18n="calcRecyclingLabel"
+                  >Recycling Habit</label
+                >
+                <select id="recyclingLevel" name="recyclingLevel">
+                  <option value="none" data-i18n="optRecycleNone">
+                    Rarely Recycle
+                  </option>
+                  <option value="some" selected data-i18n="optRecycleSome">
+                    Some Recycling
+                  </option>
+                  <option value="good" data-i18n="optRecycleGood">
+                    Good Recycling & Segregation
+                  </option>
+                  <option value="compost" data-i18n="optRecycleCompost">
+                    Recycle & Compost
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div style="text-align: center; margin-top: var(--space-md)">
+            <button type="submit" class="btn" data-i18n="calcSubmitBtn">
+              Calculate Results
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Dashboard Section -->
+      <section id="dashboard" class="section" aria-labelledby="dash-title">
+        <h2 id="dash-title" data-i18n="dashTitle">Your Dashboard</h2>
+        <div id="dashboard-container">
+          <!-- Rendered by JS -->
+          <p data-i18n="dashPlaceholder">
+            Please complete the calculator first.
+          </p>
+        </div>
+
+        <div class="grid grid--2" style="margin-top: 2rem">
+          <div>
+            <h3 data-i18n="ecoServicesTitle">📍 Local Eco Services</h3>
+            <p class="text-small" data-i18n="ecoServicesDesc">
+              Find low-carbon options near you.
+            </p>
+            <div id="maps-container" class="grid"></div>
+          </div>
+          <div>
+            <h3 data-i18n="calendarTitle">📅 Calendar Reminders</h3>
+            <p class="text-small" data-i18n="calendarDesc">
+              Schedule habits to stay on track.
+            </p>
+            <div id="calendar-container" class="grid"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Recommendations Section -->
+      <section
+        id="recommendations"
+        class="section"
+        aria-labelledby="recs-title"
+      >
+        <h2 id="recs-title" data-i18n="recsTitle">Personalized Actions</h2>
+        <p data-i18n="recsSubtitle">
+          Based on your footprint, here are the most effective ways to reduce
+          your impact.
+        </p>
+        <div id="recommendations-container" class="grid grid--3">
+          <!-- Rendered by JS -->
+          <p data-i18n="recsPlaceholder">
+            Please complete the calculator first.
+          </p>
+        </div>
+      </section>
+
+      <!-- Challenges Section -->
+      <section
+        id="challenges"
+        class="section"
+        aria-labelledby="challenges-title"
+      >
+        <h2 id="challenges-title" data-i18n="chalTitle">Eco Challenges</h2>
+        <p data-i18n="chalSubtitle">
+          Complete challenges to earn green points and badges.
+        </p>
+        <div id="challenges-container" class="grid grid--3">
+          <!-- Rendered by JS -->
+        </div>
+      </section>
+
+      <!-- Assistant Section -->
+      <section id="assistant" class="section" aria-labelledby="assistant-title">
+        <h2 id="assistant-title" data-i18n="astTitle">AI Eco Assistant</h2>
+        <p data-i18n="astSubtitle">
+          Ask questions about your footprint or request advice.
+        </p>
+        <div class="assistant-chat">
+          <div
+            id="assistant-chat"
+            class="assistant__messages"
+            aria-live="polite"
+          >
+            <!-- Rendered by JS -->
+          </div>
+          <form id="assistant-form" class="assistant__form">
+            <label
+              for="assistant-input"
+              class="sr-only"
+              data-i18n="assistantInputLabel"
+              >Type your message</label
+            >
+            <input
+              type="text"
+              id="assistant-input"
+              data-i18n-ph="astPlaceholder"
+              data-i18n-aria="assistantInputLabel"
+              placeholder="e.g., How can I reduce electricity usage?"
+              required
+              aria-label="Type your message"
+            />
+            <button type="submit" class="btn" data-i18n="astSendBtn">
+              Send
+            </button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="assets/js/app.js"></script>
+  </body>
+</html>
