@@ -37,6 +37,29 @@ const DOM = {
   themeToggle: document.getElementById("theme-toggle"),
 };
 
+const DEFAULT_SECTION_ID = "home";
+
+const getValidSectionId = (sectionId) => {
+  if (!sectionId) return DEFAULT_SECTION_ID;
+
+  const targetSection = document.getElementById(sectionId);
+  if (!targetSection || !targetSection.classList.contains("section")) {
+    return DEFAULT_SECTION_ID;
+  }
+
+  return sectionId;
+};
+
+const getInitialSectionId = (hasFootprint) => {
+  const hashSectionId = decodeURIComponent(window.location.hash || "").replace(
+    "#",
+    "",
+  );
+  if (hashSectionId) return getValidSectionId(hashSectionId);
+
+  return hasFootprint ? "dashboard" : DEFAULT_SECTION_ID;
+};
+
 /**
  * Initializes the app
  */
@@ -91,14 +114,12 @@ const init = () => {
     } catch (e) {
       console.warn("CarbonSathi: Dashboard render error", e);
     }
-    // Show dashboard by default if user has calculated before
-    navigateTo("dashboard");
+    navigateTo(getInitialSectionId(true), { updateHash: false });
   } else {
     // Show helpful empty states
     renderEmptyDashboard();
     renderEmptyRecommendations();
-    // Show home by default
-    navigateTo("home");
+    navigateTo(getInitialSectionId(false), { updateHash: false });
   }
 };
 
@@ -175,17 +196,32 @@ const setupNavigation = () => {
       navigateTo(targetId);
     });
   });
+
+  window.addEventListener("hashchange", () => {
+    navigateTo(getValidSectionId(window.location.hash.slice(1)), {
+      updateHash: false,
+    });
+  });
 };
 
-const navigateTo = (sectionId) => {
+const navigateTo = (sectionId, options = {}) => {
+  const { updateHash = true } = options;
+  const validSectionId = getValidSectionId(sectionId);
+
   DOM.sections.forEach((sec) => sec.classList.remove("section--active"));
   DOM.navLinks.forEach((link) => link.classList.remove("nav__link--active"));
 
-  const targetSec = document.getElementById(sectionId);
+  const targetSec = document.getElementById(validSectionId);
   if (targetSec) targetSec.classList.add("section--active");
 
-  const targetLink = document.querySelector(`.nav__link[href="#${sectionId}"]`);
+  const targetLink = document.querySelector(
+    `.nav__link[href="#${validSectionId}"]`,
+  );
   if (targetLink) targetLink.classList.add("nav__link--active");
+
+  if (updateHash && window.location.hash !== `#${validSectionId}`) {
+    history.pushState(null, "", `#${validSectionId}`);
+  }
 };
 
 const setupDynamicActions = () => {
@@ -362,17 +398,19 @@ const renderChallenges = () => {
 const handleChallengeCompletion = (id) => {
   const result = completeChallengeAction(id);
   if (result.success) {
-    alert(
+    const messages = [
       `${t("challengeCompletedAlert")} ${result.pointsAwarded} ${t("pointsLabel")}.`,
-    );
+    ];
+
     if (result.newlyEarnedBadges && result.newlyEarnedBadges.length > 0) {
-      alert(
+      messages.push(
         `${t("badgeEarnedAlertPrefix")} ${t(
           result.newlyEarnedBadges[0].id + "_name",
           result.newlyEarnedBadges[0].name,
         )}`,
       );
     }
+    alert(messages.join("\n"));
     renderChallenges();
   }
 };
@@ -445,3 +483,5 @@ const setupApiKeyForm = () => {
 
 // Start app
 document.addEventListener("DOMContentLoaded", init);
+
+export { getInitialSectionId, getValidSectionId, navigateTo };

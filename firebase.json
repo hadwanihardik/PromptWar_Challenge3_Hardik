@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "carbonsathi-promptwar-hardik",
     "public": ".",
     "ignore": [
       "firebase.json",
