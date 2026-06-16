@@ -275,7 +275,7 @@ Progress is stored locally and shown visually.
 
 ## 🧪 Testing Strategy
 
-Testing is a major improvement area for this challenge.
+Testing is a first-class part of the submission. The app includes an automated Vitest suite for calculation logic, recommendation behavior, storage behavior, localization, dashboard rendering, UI validation, assistant fallback behavior, and security readiness.
 
 ### Unit Tests
 
@@ -304,6 +304,19 @@ Testing is a major improvement area for this challenge.
 - Focus states
 - Screen-reader friendly dynamic updates
 
+### Security Tests
+
+- Content Security Policy is present
+- Inline JavaScript event handlers are not used
+- Gemini API calls are restricted to the documented Google endpoint
+- User progress remains local-first and does not require accounts or passwords
+
+Run the full validation locally:
+
+```bash
+npm run check
+```
+
 ### Manual Test Cases
 
 | Scenario                          | Expected Result                                   |
@@ -328,7 +341,8 @@ CarbonSathi follows a privacy-first approach.
 - User input is inserted using `textContent`, not unsafe `innerHTML`
 - Local storage is used only for non-sensitive progress data
 - External links use safe attributes
-- Content Security Policy is recommended
+- Content Security Policy is included in `index.html`
+- Interaction logic uses delegated event listeners instead of inline handlers
 
 ---
 
@@ -372,9 +386,9 @@ CarbonSathi is designed to stay lightweight and fast.
 | **Code Quality**         | Modular files, clear naming, no duplicate logic, documented assumptions |
 | **Security**             | Safe DOM updates, no exposed secrets, CSP, privacy-first storage        |
 | **Efficiency**           | Lightweight architecture, optimized assets, lazy loading                |
-| **Testing**              | Unit tests, UI tests, accessibility checklist, fallback testing         |
+| **Testing**              | Unit tests, UI tests, dashboard tests, security tests, fallback testing |
 | **Accessibility**        | Semantic UI, keyboard support, contrast, ARIA live regions              |
-| **Problem Alignment**    | Clear carbon tracking, personalized insights, simple actions            |
+| **Problem Alignment**    | Clear tracking, top-category savings, personalized actions              |
 | **Real-world Usability** | Works for everyday users, mobile-first, practical recommendations       |
 
 ---

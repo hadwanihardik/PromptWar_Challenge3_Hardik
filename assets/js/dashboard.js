@@ -7,6 +7,23 @@
 import { getEcoProfile } from "./recommendations.js";
 import { t } from "./i18n.js";
 
+const TOP_CATEGORY_REDUCTION_RATE = 0.1;
+const PETROL_CAR_KG_CO2_PER_KM = 0.192;
+
+const getDashboardInsights = (footprint) => {
+  const topValue = footprint.categories[footprint.topCategory] || 0;
+  const monthlySavingKg = topValue * TOP_CATEGORY_REDUCTION_RATE;
+  const yearlySavingKg = monthlySavingKg * 12;
+  const equivalentCarKm = Math.round(yearlySavingKg / PETROL_CAR_KG_CO2_PER_KM);
+
+  return {
+    monthlySavingKg,
+    yearlySavingKg,
+    equivalentCarKm,
+    nextActionKey: `nextAction_${footprint.topCategory}`,
+  };
+};
+
 /**
  * Renders the dashboard UI with the given footprint result.
  * @param {Object} footprint - Footprint result object
@@ -18,6 +35,7 @@ const renderDashboard = (footprint, containerEl) => {
   const { monthlyTotal, yearlyTotal, ecoScore, categories, topCategory } =
     footprint;
   const profile = getEcoProfile(topCategory);
+  const insights = getDashboardInsights(footprint);
 
   // Clear container
   containerEl.innerHTML = "";
@@ -52,6 +70,23 @@ const renderDashboard = (footprint, containerEl) => {
     </div>
   `;
 
+  const insightsHTML = `
+    <div class="dashboard__insights">
+      <div class="dashboard__card dashboard__insight">
+        <span class="dashboard__insight-kicker">${t("bestNextAction")}</span>
+        <p class="dashboard__insight-value">${t(insights.nextActionKey)}</p>
+        <p class="dashboard__insight-copy">${t("bestNextActionHint")}</p>
+      </div>
+      <div class="dashboard__card dashboard__insight">
+        <span class="dashboard__insight-kicker">${t("whatIfTitle")}</span>
+        <p class="dashboard__insight-value">${Math.round(insights.yearlySavingKg)} kg</p>
+        <p class="dashboard__insight-copy">
+          ${t("whatIfCopy")} ${insights.equivalentCarKm} ${t("carKmEquivalent")}
+        </p>
+      </div>
+    </div>
+  `;
+
   // 3. Category Breakdown (CSS Bar Chart)
   const maxCategory = Math.max(...Object.values(categories));
   let barsHTML = '<div class="dashboard__bars">';
@@ -73,6 +108,7 @@ const renderDashboard = (footprint, containerEl) => {
 
   containerEl.innerHTML = `
     ${headerHTML}
+    ${insightsHTML}
     ${profileHTML}
     <div class="dashboard__card">
       <h3>${t("dashCategoryTitle")}</h3>
@@ -81,4 +117,4 @@ const renderDashboard = (footprint, containerEl) => {
   `;
 };
 
-export { renderDashboard };
+export { renderDashboard, getDashboardInsights };

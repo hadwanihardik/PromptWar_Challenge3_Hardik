@@ -8,6 +8,10 @@
       name="description"
       content="Understand, track, and reduce your carbon footprint with CarbonSathi's personalized AI assistant."
     />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://generativelanguage.googleapis.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+    />
     <link rel="stylesheet" href="assets/css/style.css" />
   </head>
   <body>
@@ -56,15 +60,11 @@
           </li>
         </ul>
       </nav>
-      <div
-        class="app-header__controls"
-        style="display: flex; gap: 10px; align-items: center"
-      >
+      <div class="app-header__controls">
         <select
           id="language-selector"
           aria-label="Language Selector"
           data-i18n-aria="languageSelectorLabel"
-          style="padding: 0.25rem; border-radius: 4px"
         >
           <option value="en">English</option>
           <option value="hi">हिंदी (Hindi)</option>
@@ -76,11 +76,6 @@
           class="btn btn--small"
           aria-label="Toggle Theme"
           data-i18n-aria="themeToggleLabel"
-          style="
-            background: transparent;
-            border: 1px solid #ccc;
-            color: var(--color-text);
-          "
         >
           ☀️
         </button>
@@ -103,21 +98,17 @@
         <a
           href="#calculator"
           class="btn"
-          onclick="
-            document.querySelector('.nav__link[href=\'#calculator\']').click();
-            return false;
-          "
           data-i18n="calcStartBtn"
           >Calculate My Footprint</a
         >
 
-        <div class="card" style="margin-top: 2rem">
+        <div class="card stack-md">
           <h3 data-i18n="apiSettings">API Settings (Optional)</h3>
           <p class="text-small" data-i18n="apiDesc">
             CarbonSathi works offline, but you can add a Gemini API Key for
             personalized AI advice.
           </p>
-          <div style="display: flex; gap: 10px; margin-top: 10px">
+          <div class="inline-form">
             <label for="api-key-input" class="sr-only" data-i18n="apiKeyLabel"
               >Gemini API Key</label
             >
@@ -279,7 +270,7 @@
             </div>
           </div>
 
-          <div style="text-align: center; margin-top: var(--space-md)">
+          <div class="form-actions">
             <button type="submit" class="btn" data-i18n="calcSubmitBtn">
               Calculate Results
             </button>
@@ -297,7 +288,7 @@
           </p>
         </div>
 
-        <div class="grid grid--2" style="margin-top: 2rem">
+        <div class="grid grid--2 stack-lg">
           <div>
             <h3 data-i18n="ecoServicesTitle">📍 Local Eco Services</h3>
             <p class="text-small" data-i18n="ecoServicesDesc">

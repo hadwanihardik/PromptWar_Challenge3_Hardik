@@ -110,6 +110,25 @@ p {
   color: var(--color-text-muted);
 }
 
+.stack-md {
+  margin-top: 2rem;
+}
+
+.stack-lg {
+  margin-top: 2rem;
+}
+
+.inline-form {
+  display: flex;
+  gap: 0.65rem;
+  margin-top: 0.65rem;
+}
+
+.form-actions {
+  text-align: center;
+  margin-top: var(--space-md);
+}
+
 /* ─── Header ─────────────────────────────────────────────────────────────────── */
 .app-header {
   background-color: var(--color-surface);
@@ -378,6 +397,29 @@ select:focus {
   flex-wrap: wrap;
 }
 
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+}
+
+.empty-state--wide {
+  grid-column: 1 / -1;
+}
+
+.empty-state__icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.empty-state__copy {
+  margin-top: 0.5rem;
+  opacity: 0.75;
+}
+
+.empty-state__button {
+  margin-top: 1rem;
+}
+
 /* ─── Dashboard ──────────────────────────────────────────────────────────────── */
 .dashboard__summary {
   display: grid;
@@ -430,6 +472,38 @@ select:focus {
   font-size: 0.85rem;
   opacity: 0.8;
   margin: 0;
+}
+
+.dashboard__insights {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.dashboard__insight {
+  text-align: left;
+}
+
+.dashboard__insight-kicker {
+  color: var(--color-primary);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.dashboard__insight-value {
+  font-size: 1.9rem;
+  font-weight: 700;
+  line-height: 1.15;
+  margin: 0.25rem 0;
+}
+
+.dashboard__insight-copy {
+  color: var(--color-text-muted);
+  font-size: 0.92rem;
+  margin-bottom: 0;
 }
 
 /* Score Ring */

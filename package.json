@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "eslint assets/js/**/*.js tests/**/*.js --max-warnings=0",
     "format": "prettier --write .",
-    "test": "vitest run",
+    "test": "vitest run --pool=forks",
     "test:watch": "vitest",
     "size": "du -sh .",
     "check": "npm run lint && npm run test"

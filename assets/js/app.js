@@ -41,23 +41,46 @@ const DOM = {
  * Initializes the app
  */
 const init = () => {
-  try { setupTheme(); } catch (e) { console.warn("CarbonSathi: Theme init error", e); }
-  try { setupLanguage(); } catch (e) { console.warn("CarbonSathi: Language init error", e); }
+  try {
+    setupTheme();
+  } catch (e) {
+    console.warn("CarbonSathi: Theme init error", e);
+  }
+  try {
+    setupLanguage();
+  } catch (e) {
+    console.warn("CarbonSathi: Language init error", e);
+  }
 
   setupNavigation();
   setupCalculator();
   setupApiKeyForm();
+  setupDynamicActions();
 
   // Render initial sections — each wrapped so one failure doesn't block others
-  try { renderChallenges(); } catch (e) { console.warn("CarbonSathi: Challenges render error", e); }
-  try { renderMapsLinks(); } catch (e) { console.warn("CarbonSathi: Maps render error", e); }
-  try { renderCalendarLinks(); } catch (e) { console.warn("CarbonSathi: Calendar render error", e); }
+  try {
+    renderChallenges();
+  } catch (e) {
+    console.warn("CarbonSathi: Challenges render error", e);
+  }
+  try {
+    renderMapsLinks();
+  } catch (e) {
+    console.warn("CarbonSathi: Maps render error", e);
+  }
+  try {
+    renderCalendarLinks();
+  } catch (e) {
+    console.warn("CarbonSathi: Calendar render error", e);
+  }
 
   try {
     if (DOM.assistantChat) {
       initAssistant(DOM.assistantChat, DOM.assistantForm, DOM.assistantInput);
     }
-  } catch (e) { console.warn("CarbonSathi: Assistant init error", e); }
+  } catch (e) {
+    console.warn("CarbonSathi: Assistant init error", e);
+  }
 
   // Load dashboard if footprint exists
   const state = loadState();
@@ -65,7 +88,9 @@ const init = () => {
     try {
       renderDashboard(state.footprint, DOM.dashboardContainer);
       renderRecommendations(state.footprint);
-    } catch (e) { console.warn("CarbonSathi: Dashboard render error", e); }
+    } catch (e) {
+      console.warn("CarbonSathi: Dashboard render error", e);
+    }
     // Show dashboard by default if user has calculated before
     navigateTo("dashboard");
   } else {
@@ -163,6 +188,23 @@ const navigateTo = (sectionId) => {
   if (targetLink) targetLink.classList.add("nav__link--active");
 };
 
+const setupDynamicActions = () => {
+  document.addEventListener("click", (e) => {
+    const calculatorAction = e.target.closest("[data-action='go-calculator']");
+    if (calculatorAction) {
+      e.preventDefault();
+      navigateTo("calculator");
+      return;
+    }
+
+    const challengeButton = e.target.closest("[data-challenge-id]");
+    if (challengeButton) {
+      e.preventDefault();
+      handleChallengeCompletion(challengeButton.dataset.challengeId);
+    }
+  });
+};
+
 /**
  * Calculator Form handler
  */
@@ -255,13 +297,13 @@ const renderRecommendations = (footprint) => {
 const renderEmptyDashboard = () => {
   if (!DOM.dashboardContainer) return;
   DOM.dashboardContainer.innerHTML = `
-    <div class="card" style="text-align:center; padding: 2rem;">
-      <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
+    <div class="card empty-state">
+      <div class="empty-state__icon">📊</div>
       <h3>${t("dashPlaceholder", "Please complete the calculator first.")}</h3>
-      <p class="text-small" style="margin-top: 0.5rem; opacity: 0.75;">
+      <p class="text-small empty-state__copy">
         ${t("dashPlaceholderHint", "Use the Calculator tab to estimate your carbon footprint, then come back here for a detailed breakdown.")}
       </p>
-      <button class="btn" style="margin-top: 1rem;" onclick="document.querySelector('.nav__link[href=\\x23calculator]').click()">
+      <button class="btn empty-state__button" data-action="go-calculator">
         ${t("calcStartBtn", "Calculate My Footprint")}
       </button>
     </div>
@@ -274,13 +316,13 @@ const renderEmptyDashboard = () => {
 const renderEmptyRecommendations = () => {
   if (!DOM.recsContainer) return;
   DOM.recsContainer.innerHTML = `
-    <div class="card" style="text-align:center; padding: 2rem; grid-column: 1 / -1;">
-      <div style="font-size: 3rem; margin-bottom: 1rem;">🌿</div>
+    <div class="card empty-state empty-state--wide">
+      <div class="empty-state__icon">🌿</div>
       <h3>${t("recsPlaceholder", "Please complete the calculator first.")}</h3>
-      <p class="text-small" style="margin-top: 0.5rem; opacity: 0.75;">
+      <p class="text-small empty-state__copy">
         ${t("recsPlaceholderHint", "Once you calculate your footprint, we'll show personalized actions tailored to your biggest emission areas.")}
       </p>
-      <button class="btn" style="margin-top: 1rem;" onclick="document.querySelector('.nav__link[href=\\x23calculator]').click()">
+      <button class="btn empty-state__button" data-action="go-calculator">
         ${t("calcStartBtn", "Calculate My Footprint")}
       </button>
     </div>
@@ -307,7 +349,7 @@ const renderChallenges = () => {
       <div class="card__content">
         <h3>${t(ch.id + "_title", ch.title)}</h3>
         <p>${t(ch.id + "_desc", ch.description)}</p>
-        <button class="btn btn--small" onclick="window.completeChallenge('${ch.id}')">${t("completeBtn")} (${ch.points} ${t("ptsLabel")})</button>
+        <button class="btn btn--small" data-challenge-id="${ch.id}">${t("completeBtn")} (${ch.points} ${t("ptsLabel")})</button>
       </div>
     </div>
   `,
@@ -317,10 +359,7 @@ const renderChallenges = () => {
   DOM.challengesContainer.innerHTML = html;
 };
 
-/**
- * Global function for completing a challenge from UI
- */
-window.completeChallenge = (id) => {
+const handleChallengeCompletion = (id) => {
   const result = completeChallengeAction(id);
   if (result.success) {
     alert(

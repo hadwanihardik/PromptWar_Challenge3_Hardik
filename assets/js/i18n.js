@@ -86,6 +86,17 @@ const TRANSLATIONS = {
     dashPlaceholder: "Please complete the calculator first.",
     dashPlaceholderHint:
       "Use the Calculator tab to estimate your carbon footprint, then come back here for a detailed breakdown.",
+    bestNextAction: "Best next action",
+    bestNextActionHint:
+      "Start here because this category has the biggest impact in your current footprint.",
+    whatIfTitle: "What if you cut your top category by 10%?",
+    whatIfCopy: "Estimated yearly saving, roughly like avoiding",
+    carKmEquivalent: "km of petrol-car travel.",
+    nextAction_transport: "Try one car-free commute this week",
+    nextAction_energy: "Set AC to 24°C and unplug standby devices",
+    nextAction_food: "Swap one meal a day for a plant-forward option",
+    nextAction_shopping: "Repair or reuse before buying new",
+    nextAction_waste: "Separate wet and dry waste daily",
 
     // Recommendations
     recsTitle: "Personalized Actions",
@@ -422,6 +433,17 @@ const TRANSLATIONS = {
     dashPlaceholder: "कृपया पहले कैलकुलेटर पूरा करें।",
     dashPlaceholderHint:
       "अपना कार्बन फुटप्रिंट अनुमानित करने के लिए कैलकुलेटर टैब का उपयोग करें, फिर विस्तृत विवरण देखने के लिए यहां लौटें।",
+    bestNextAction: "सबसे अच्छा अगला कदम",
+    bestNextActionHint:
+      "यहीं से शुरू करें क्योंकि यह श्रेणी आपके मौजूदा फुटप्रिंट में सबसे बड़ा प्रभाव डालती है।",
+    whatIfTitle: "अगर आप अपनी शीर्ष श्रेणी 10% घटाएं?",
+    whatIfCopy: "अनुमानित वार्षिक बचत, लगभग इतने पेट्रोल-कार सफर से बचने जैसी",
+    carKmEquivalent: "किमी।",
+    nextAction_transport: "इस सप्ताह एक कार-मुक्त यात्रा करें",
+    nextAction_energy: "AC को 24°C पर रखें और स्टैंडबाय उपकरण अनप्लग करें",
+    nextAction_food: "दिन में एक भोजन पौधा-आधारित विकल्प से बदलें",
+    nextAction_shopping: "नया खरीदने से पहले मरम्मत या पुन: उपयोग करें",
+    nextAction_waste: "गीला और सूखा कचरा रोज अलग करें",
 
     recsTitle: "व्यक्तिगत सुझाव",
     recsSubtitle: "आपके फुटप्रिंट के आधार पर, प्रभाव कम करने के प्रभावी तरीके।",
@@ -738,6 +760,17 @@ const TRANSLATIONS = {
     dashPlaceholder: "કૃપા કરીને પહેલા કેલ્ક્યુલેટર પૂર્ણ કરો.",
     dashPlaceholderHint:
       "તમારા કાર્બન ફૂટપ્રિન્ટનો અંદાજ મેળવવા કેલ્ક્યુલેટર ટૅબ વાપરો, પછી વિગતવાર માહિતી માટે અહીં પાછા આવો.",
+    bestNextAction: "સૌથી સારો આગળનો પગલું",
+    bestNextActionHint:
+      "અહીંથી શરૂ કરો કારણ કે આ શ્રેણી તમારા હાલના ફૂટપ્રિન્ટમાં સૌથી વધુ અસર કરે છે.",
+    whatIfTitle: "જો તમે ટોચની શ્રેણી 10% ઘટાડો તો?",
+    whatIfCopy: "અંદાજિત વાર્ષિક બચત, અંદાજે પેટ્રોલ કારના આટલા પ્રવાસ જેટલી",
+    carKmEquivalent: "કિમી ટાળવા જેવી.",
+    nextAction_transport: "આ અઠવાડિયે એક કાર-મુક્ત મુસાફરી કરો",
+    nextAction_energy: "AC 24°C પર રાખો અને સ્ટેન્ડબાય ઉપકરણો અનપ્લગ કરો",
+    nextAction_food: "દિવસમાં એક ભોજન શાકાહારી વિકલ્પથી બદલો",
+    nextAction_shopping: "નવું ખરીદતા પહેલાં રિપેર અથવા ફરી ઉપયોગ કરો",
+    nextAction_waste: "ભીનો અને સૂકો કચરો રોજ અલગ કરો",
 
     recsTitle: "વ્યક્તિગત સૂચનો",
     recsSubtitle: "તમારા ફૂટપ્રિન્ટના આધારે, અસર ઘટાડવાની અસરકારક રીતો.",
@@ -1028,6 +1061,17 @@ const TRANSLATIONS = {
     dashPlaceholder: "कृपया आधी कॅल्क्युलेटर पूर्ण करा.",
     dashPlaceholderHint:
       "तुमचा कार्बन फूटप्रिंट अंदाजण्यासाठी कॅल्क्युलेटर टॅब वापरा, मग तपशील पाहण्यासाठी इथे परत या.",
+    bestNextAction: "सर्वोत्तम पुढची कृती",
+    bestNextActionHint:
+      "इथून सुरुवात करा कारण ही श्रेणी तुमच्या सध्याच्या फूटप्रिंटमध्ये सर्वाधिक प्रभाव टाकते.",
+    whatIfTitle: "तुमची सर्वोच्च श्रेणी 10% कमी केली तर?",
+    whatIfCopy: "अंदाजित वार्षिक बचत, साधारण पेट्रोल कारचा एवढा प्रवास टाळल्यासारखी",
+    carKmEquivalent: "किमी.",
+    nextAction_transport: "या आठवड्यात एक गाडीशिवाय प्रवास करा",
+    nextAction_energy: "AC 24°C वर ठेवा आणि स्टँडबाय साधने अनप्लग करा",
+    nextAction_food: "दिवसातून एक जेवण वनस्पती-आधारित पर्यायाने बदला",
+    nextAction_shopping: "नवीन खरेदीपूर्वी दुरुस्ती किंवा पुनर्वापर करा",
+    nextAction_waste: "ओला आणि सुका कचरा रोज वेगळा करा",
 
     recsTitle: "वैयक्तिकृत सूचना",
     recsSubtitle:
