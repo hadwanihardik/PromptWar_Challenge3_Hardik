@@ -92,6 +92,9 @@ const TRANSLATIONS = {
     whatIfTitle: "What if you cut your top category by 10%?",
     whatIfCopy: "Estimated yearly saving, roughly like avoiding",
     carKmEquivalent: "km of petrol-car travel.",
+    badgesTitle: "Earned Badges",
+    badgesEarnedCount: "earned",
+    badgesEmpty: "Complete eco challenges to unlock badge images here.",
     nextAction_transport: "Try one car-free commute this week",
     nextAction_energy: "Set AC to 24°C and unplug standby devices",
     nextAction_food: "Swap one meal a day for a plant-forward option",
@@ -133,6 +136,7 @@ const TRANSLATIONS = {
     ecoServicesDesc: "Find low-carbon options near you.",
     calendarTitle: "📅 Calendar Reminders",
     calendarDesc: "Schedule habits to stay on track.",
+    footerPrivacy: "CarbonSathi stores progress locally on this device.",
 
     // Raw Categories
     transport: "Transport",
@@ -209,8 +213,11 @@ const TRANSLATIONS = {
     pointsLabel: "points",
     savesLabel: "Saves ~",
     kgPerMonth: "kg/mo",
+    challengeCompletedTitle: "Challenge completed",
     challengeCompletedAlert: "Challenge completed! You earned",
     badgeEarnedAlertPrefix: "🎉 You earned a new badge:",
+    challengePopupAction: "Continue",
+    closePopupLabel: "Close popup",
     apiSavedAlert: "API Key saved for this session.",
     apiInvalidAlert: "Please enter a valid key.",
 
@@ -439,6 +446,9 @@ const TRANSLATIONS = {
     whatIfTitle: "अगर आप अपनी शीर्ष श्रेणी 10% घटाएं?",
     whatIfCopy: "अनुमानित वार्षिक बचत, लगभग इतने पेट्रोल-कार सफर से बचने जैसी",
     carKmEquivalent: "किमी।",
+    badgesTitle: "अर्जित बैज",
+    badgesEarnedCount: "अर्जित",
+    badgesEmpty: "बैज इमेज अनलॉक करने के लिए इको चुनौतियां पूरी करें।",
     nextAction_transport: "इस सप्ताह एक कार-मुक्त यात्रा करें",
     nextAction_energy: "AC को 24°C पर रखें और स्टैंडबाय उपकरण अनप्लग करें",
     nextAction_food: "दिन में एक भोजन पौधा-आधारित विकल्प से बदलें",
@@ -461,8 +471,7 @@ const TRANSLATIONS = {
     astPlaceholder: "जैसे, मैं बिजली का उपयोग कैसे कम कर सकता हूं?",
     assistantGreeting:
       "नमस्ते! मैं आपका कार्बन साथी हूं। अपना फुटप्रिंट कम करने या अपने हाल के परिणामों के बारे में मुझसे पूछें।",
-    assistantError:
-      "माफ करें, असिस्टेंट से जुड़ते समय कुछ समस्या हुई।",
+    assistantError: "माफ करें, असिस्टेंट से जुड़ते समय कुछ समस्या हुई।",
 
     apiSettings: "एपीआई सेटिंग्स (वैकल्पिक)",
     apiDesc:
@@ -474,6 +483,8 @@ const TRANSLATIONS = {
     ecoServicesDesc: "अपने पास कम कार्बन विकल्प खोजें।",
     calendarTitle: "📅 कैलेंडर रिमाइंडर",
     calendarDesc: "आदतें बनाए रखने के लिए शेड्यूल करें।",
+    footerPrivacy:
+      "कार्बन साथी आपकी प्रगति इसी डिवाइस पर स्थानीय रूप से सहेजता है।",
 
     transport: "यातायात",
     energy: "घरेलू ऊर्जा",
@@ -547,8 +558,11 @@ const TRANSLATIONS = {
     pointsLabel: "अंक",
     savesLabel: "बचत ~",
     kgPerMonth: "किग्रा/माह",
+    challengeCompletedTitle: "चुनौती पूरी हुई",
     challengeCompletedAlert: "चुनौती पूरी हुई! आपने अर्जित किए",
     badgeEarnedAlertPrefix: "🎉 आपने नया बैज जीता:",
+    challengePopupAction: "जारी रखें",
+    closePopupLabel: "पॉपअप बंद करें",
     apiSavedAlert: "API कुंजी इस सत्र के लिए सहेज दी गई है।",
     apiInvalidAlert: "कृपया मान्य कुंजी दर्ज करें।",
 
@@ -766,6 +780,9 @@ const TRANSLATIONS = {
     whatIfTitle: "જો તમે ટોચની શ્રેણી 10% ઘટાડો તો?",
     whatIfCopy: "અંદાજિત વાર્ષિક બચત, અંદાજે પેટ્રોલ કારના આટલા પ્રવાસ જેટલી",
     carKmEquivalent: "કિમી ટાળવા જેવી.",
+    badgesTitle: "મેળવેલા બેજ",
+    badgesEarnedCount: "મેળવ્યા",
+    badgesEmpty: "અહીં બેજ ઇમેજ અનલોક કરવા ઇકો પડકારો પૂર્ણ કરો.",
     nextAction_transport: "આ અઠવાડિયે એક કાર-મુક્ત મુસાફરી કરો",
     nextAction_energy: "AC 24°C પર રાખો અને સ્ટેન્ડબાય ઉપકરણો અનપ્લગ કરો",
     nextAction_food: "દિવસમાં એક ભોજન શાકાહારી વિકલ્પથી બદલો",
@@ -788,8 +805,7 @@ const TRANSLATIONS = {
     astPlaceholder: "દા.ત., હું વીજળીનો વપરાશ કેવી રીતે ઘટાડી શકું?",
     assistantGreeting:
       "નમસ્તે! હું તમારો કાર્બન સાથી છું. ફૂટપ્રિન્ટ ઘટાડવા અથવા તમારા તાજેતરના પરિણામો વિશે મને પૂછો.",
-    assistantError:
-      "માફ કરશો, આસિસ્ટન્ટ સાથે જોડાતાં કંઈક ખોટું થયું.",
+    assistantError: "માફ કરશો, આસિસ્ટન્ટ સાથે જોડાતાં કંઈક ખોટું થયું.",
 
     apiSettings: "API સેટિંગ્સ (વૈકલ્પિક)",
     apiDesc:
@@ -801,6 +817,8 @@ const TRANSLATIONS = {
     ecoServicesDesc: "તમારી નજીકમાં ઓછા કાર્બન વિકલ્પો શોધો.",
     calendarTitle: "📅 કૅલેન્ડર રીમાઇન્ડર",
     calendarDesc: "આદતો જાળવવા શેડ્યૂલ કરો.",
+    footerPrivacy:
+      "કાર્બન સાથી તમારી પ્રગતિ આ ડિવાઇસ પર સ્થાનિક રીતે સાચવે છે.",
 
     transport: "પરિવહન",
     energy: "ઊર્જા",
@@ -871,8 +889,11 @@ const TRANSLATIONS = {
     pointsLabel: "પોઇન્ટ",
     savesLabel: "બચત ~",
     kgPerMonth: "કિગ્રા/માસ",
+    challengeCompletedTitle: "પડકાર પૂર્ણ થયો",
     challengeCompletedAlert: "પડકાર પૂર્ણ થયો! તમે મેળવ્યા",
     badgeEarnedAlertPrefix: "🎉 તમે નવો બેજ મેળવ્યો:",
+    challengePopupAction: "આગળ વધો",
+    closePopupLabel: "પોપઅપ બંધ કરો",
     apiSavedAlert: "API કી આ સત્ર માટે સાચવી છે.",
     apiInvalidAlert: "કૃપા કરીને માન્ય કી દાખલ કરો.",
 
@@ -1065,8 +1086,12 @@ const TRANSLATIONS = {
     bestNextActionHint:
       "इथून सुरुवात करा कारण ही श्रेणी तुमच्या सध्याच्या फूटप्रिंटमध्ये सर्वाधिक प्रभाव टाकते.",
     whatIfTitle: "तुमची सर्वोच्च श्रेणी 10% कमी केली तर?",
-    whatIfCopy: "अंदाजित वार्षिक बचत, साधारण पेट्रोल कारचा एवढा प्रवास टाळल्यासारखी",
+    whatIfCopy:
+      "अंदाजित वार्षिक बचत, साधारण पेट्रोल कारचा एवढा प्रवास टाळल्यासारखी",
     carKmEquivalent: "किमी.",
+    badgesTitle: "मिळवलेले बॅज",
+    badgesEarnedCount: "मिळवले",
+    badgesEmpty: "इथे बॅज इमेज अनलॉक करण्यासाठी इको आव्हाने पूर्ण करा.",
     nextAction_transport: "या आठवड्यात एक गाडीशिवाय प्रवास करा",
     nextAction_energy: "AC 24°C वर ठेवा आणि स्टँडबाय साधने अनप्लग करा",
     nextAction_food: "दिवसातून एक जेवण वनस्पती-आधारित पर्यायाने बदला",
@@ -1090,8 +1115,7 @@ const TRANSLATIONS = {
     astPlaceholder: "उदा., मी विजेचा वापर कसा कमी करू शकतो?",
     assistantGreeting:
       "नमस्ते! मी तुमचा कार्बन साथी आहे. फूटप्रिंट कमी करण्याबद्दल किंवा अलीकडच्या निकालांबद्दल मला विचारा.",
-    assistantError:
-      "माफ करा, असिस्टंटशी जोडताना काहीतरी चूक झाली.",
+    assistantError: "माफ करा, असिस्टंटशी जोडताना काहीतरी चूक झाली.",
 
     apiSettings: "API सेटिंग्ज (पर्यायी)",
     apiDesc:
@@ -1103,6 +1127,8 @@ const TRANSLATIONS = {
     ecoServicesDesc: "तुमच्या जवळ कमी कार्बन पर्याय शोधा.",
     calendarTitle: "📅 कॅलेंडर रिमाइंडर",
     calendarDesc: "सवयी राखण्यासाठी शेड्यूल करा.",
+    footerPrivacy:
+      "कार्बन साथी तुमची प्रगती या डिव्हाइसवर स्थानिकरित्या जतन करते.",
 
     transport: "वाहतूक",
     energy: "घरेलू ऊर्जा",
@@ -1176,8 +1202,11 @@ const TRANSLATIONS = {
     pointsLabel: "गुण",
     savesLabel: "बचत ~",
     kgPerMonth: "किग्रॅ/महिना",
+    challengeCompletedTitle: "आव्हान पूर्ण झाले",
     challengeCompletedAlert: "आव्हान पूर्ण झाले! तुम्हाला मिळाले",
     badgeEarnedAlertPrefix: "🎉 तुम्हाला नवीन बॅज मिळाला:",
+    challengePopupAction: "पुढे जा",
+    closePopupLabel: "पॉपअप बंद करा",
     apiSavedAlert: "API की या सत्रासाठी जतन केली आहे.",
     apiInvalidAlert: "कृपया वैध की प्रविष्ट करा.",
 

@@ -104,10 +104,7 @@ const getOfflineFallback = (userMessage = "") => {
   }
   // Default: rotate through general responses using message length as seed
   const index = (userMessage.length % (OFFLINE_RESPONSES.length - 2)) + 1;
-  return (
-    OFFLINE_RESPONSES[index] +
-    "\n\n(Note: AI assistant is offline — showing pre-set guidance. Add your Gemini API key for personalized responses.)"
-  );
+  return `${OFFLINE_RESPONSES[index]}\n\n(Note: AI assistant is offline — showing pre-set guidance. Add your Gemini API key for personalized responses.)`;
 };
 
 // ─── GEMINI API CALL ──────────────────────────────────────────────────────────

@@ -5,8 +5,12 @@
  */
 
 import { calculateTotal } from "./calculator.js";
-import { saveFootprintResult, loadState } from "./storage.js";
-import { renderDashboard } from "./dashboard.js";
+import {
+  saveFootprintResult,
+  loadState,
+  updatePreferences,
+} from "./storage.js";
+import { renderDashboard, getBadgeImageSrc } from "./dashboard.js";
 import { getTopRecommendations } from "./recommendations.js";
 import { initAssistant, refreshAssistantGreeting } from "./assistant.js";
 import {
@@ -38,6 +42,63 @@ const DOM = {
 };
 
 const DEFAULT_SECTION_ID = "home";
+const DEFAULT_COMMUTE_DAYS_PER_MONTH = 22;
+const RECOMMENDATION_COUNT = 6;
+const ACTION_LINK_SECTION_CONFIG = {
+  maps: {
+    container: () => DOM.mapsContainer,
+    links: getAllEcoMapLinks,
+  },
+  calendar: {
+    container: () => DOM.calendarContainer,
+    links: getAllCalendarReminders,
+  },
+};
+
+const parsePositiveNumber = (value) => {
+  const parsed = parseFloat(value);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
+};
+
+const buildCalculatorInputs = (form) => {
+  const formData = new FormData(form);
+
+  return {
+    transport: {
+      dailyDistanceKm: parsePositiveNumber(formData.get("dailyDistanceKm")),
+      vehicleType: formData.get("vehicleType"),
+      commuteDaysPerMonth: DEFAULT_COMMUTE_DAYS_PER_MONTH,
+      domesticFlightsPerYear: parsePositiveNumber(
+        formData.get("domesticFlightsPerYear"),
+      ),
+    },
+    energy: {
+      monthlyKwh: parsePositiveNumber(formData.get("monthlyKwh")),
+    },
+    food: {
+      dietType: formData.get("dietType"),
+      foodWaste: formData.get("foodWaste"),
+    },
+    shopping: {
+      newClothingItemsPerMonth: parsePositiveNumber(
+        formData.get("newClothingItemsPerMonth"),
+      ),
+    },
+    waste: {
+      recyclingLevel: formData.get("recyclingLevel"),
+    },
+  };
+};
+
+const runSafely = (label, task) => {
+  try {
+    task();
+  } catch (error) {
+    console.warn(`CarbonSathi: ${label} error`, error);
+  }
+};
+
+let challengePopupPreviousFocus = null;
 
 const getValidSectionId = (sectionId) => {
   if (!sectionId) return DEFAULT_SECTION_ID;
@@ -64,63 +125,41 @@ const getInitialSectionId = (hasFootprint) => {
  * Initializes the app
  */
 const init = () => {
-  try {
-    setupTheme();
-  } catch (e) {
-    console.warn("CarbonSathi: Theme init error", e);
-  }
-  try {
-    setupLanguage();
-  } catch (e) {
-    console.warn("CarbonSathi: Language init error", e);
-  }
+  runSafely("Theme init", setupTheme);
+  runSafely("Language init", setupLanguage);
 
   setupNavigation();
   setupCalculator();
   setupApiKeyForm();
   setupDynamicActions();
 
-  // Render initial sections — each wrapped so one failure doesn't block others
-  try {
-    renderChallenges();
-  } catch (e) {
-    console.warn("CarbonSathi: Challenges render error", e);
-  }
-  try {
-    renderMapsLinks();
-  } catch (e) {
-    console.warn("CarbonSathi: Maps render error", e);
-  }
-  try {
-    renderCalendarLinks();
-  } catch (e) {
-    console.warn("CarbonSathi: Calendar render error", e);
-  }
+  runSafely("Challenges render", renderChallenges);
+  runSafely("Maps render", renderMapsLinks);
+  runSafely("Calendar render", renderCalendarLinks);
 
-  try {
+  runSafely("Assistant init", () => {
     if (DOM.assistantChat) {
       initAssistant(DOM.assistantChat, DOM.assistantForm, DOM.assistantInput);
     }
-  } catch (e) {
-    console.warn("CarbonSathi: Assistant init error", e);
-  }
+  });
 
-  // Load dashboard if footprint exists
+  renderInitialFootprintState();
+};
+
+const renderInitialFootprintState = () => {
   const state = loadState();
   if (state.footprint) {
-    try {
+    runSafely("Dashboard render", () => {
       renderDashboard(state.footprint, DOM.dashboardContainer);
       renderRecommendations(state.footprint);
-    } catch (e) {
-      console.warn("CarbonSathi: Dashboard render error", e);
-    }
+    });
     navigateTo(getInitialSectionId(true), { updateHash: false });
-  } else {
-    // Show helpful empty states
-    renderEmptyDashboard();
-    renderEmptyRecommendations();
-    navigateTo(getInitialSectionId(false), { updateHash: false });
+    return;
   }
+
+  renderEmptyDashboard();
+  renderEmptyRecommendations();
+  navigateTo(getInitialSectionId(false), { updateHash: false });
 };
 
 /**
@@ -130,8 +169,8 @@ const setupTheme = () => {
   const state = loadState();
   let theme = state.preferences?.theme || "light";
 
-  const applyTheme = (t) => {
-    if (t === "dark") {
+  const applyTheme = (selectedTheme) => {
+    if (selectedTheme === "dark") {
       document.body.classList.add("theme-dark");
       DOM.themeToggle.textContent = "🌙";
     } else {
@@ -146,12 +185,7 @@ const setupTheme = () => {
     theme = theme === "light" ? "dark" : "light";
     applyTheme(theme);
 
-    // Save preference
-    const currentState = loadState();
-    currentState.preferences = currentState.preferences || {};
-    currentState.preferences.theme = theme;
-    // We update manually via localstorage export if needed, or we just save entire state
-    localStorage.setItem("carbonwise_v1", JSON.stringify(currentState));
+    updatePreferences({ theme });
   });
 };
 
@@ -169,6 +203,14 @@ const setupLanguage = () => {
 };
 
 const renderLocalizedDynamicSections = () => {
+  refreshFootprintSections();
+  renderChallenges();
+  renderMapsLinks();
+  renderCalendarLinks();
+  refreshAssistantGreeting(DOM.assistantChat);
+};
+
+const refreshFootprintSections = () => {
   const state = loadState();
 
   if (state.footprint) {
@@ -178,11 +220,6 @@ const renderLocalizedDynamicSections = () => {
     renderEmptyDashboard();
     renderEmptyRecommendations();
   }
-
-  renderChallenges();
-  renderMapsLinks();
-  renderCalendarLinks();
-  refreshAssistantGreeting(DOM.assistantChat);
 };
 
 /**
@@ -237,6 +274,27 @@ const setupDynamicActions = () => {
     if (challengeButton) {
       e.preventDefault();
       handleChallengeCompletion(challengeButton.dataset.challengeId);
+      return;
+    }
+
+    const toastCloseButton = e.target.closest("[data-action='close-toast']");
+    if (toastCloseButton) {
+      e.preventDefault();
+      dismissChallengePopup();
+      return;
+    }
+
+    const popupOverlay = e.target.closest(
+      "[data-action='close-popup-overlay']",
+    );
+    if (popupOverlay && e.target === popupOverlay) {
+      dismissChallengePopup();
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && document.querySelector(".challenge-popup")) {
+      dismissChallengePopup();
     }
   });
 };
@@ -250,43 +308,11 @@ const setupCalculator = () => {
   DOM.calcForm.addEventListener("submit", (e) => {
     e.preventDefault();
 
-    // Gather inputs
-    const formData = new FormData(DOM.calcForm);
-    const inputs = {
-      transport: {
-        dailyDistanceKm: parseFloat(formData.get("dailyDistanceKm")) || 0,
-        vehicleType: formData.get("vehicleType"),
-        commuteDaysPerMonth: 22,
-        domesticFlightsPerYear:
-          parseFloat(formData.get("domesticFlightsPerYear")) || 0,
-      },
-      energy: {
-        monthlyKwh: parseFloat(formData.get("monthlyKwh")) || 0,
-      },
-      food: {
-        dietType: formData.get("dietType"),
-        foodWaste: formData.get("foodWaste"),
-      },
-      shopping: {
-        newClothingItemsPerMonth:
-          parseFloat(formData.get("newClothingItemsPerMonth")) || 0,
-      },
-      waste: {
-        recyclingLevel: formData.get("recyclingLevel"),
-      },
-    };
-
-    // Calculate
-    const result = calculateTotal(inputs);
-
-    // Save to localStorage
+    const result = calculateTotal(buildCalculatorInputs(DOM.calcForm));
     saveFootprintResult(result);
 
-    // Render Dashboard & Recommendations
     renderDashboard(result, DOM.dashboardContainer);
     renderRecommendations(result);
-
-    // Navigate to Dashboard
     navigateTo("dashboard");
   });
 };
@@ -301,7 +327,7 @@ const renderRecommendations = (footprint) => {
   const recs = getTopRecommendations({
     categories: footprint.categories,
     completedTipIds: state.completedChallenges,
-    count: 3,
+    count: RECOMMENDATION_COUNT,
   });
 
   if (recs.length === 0) {
@@ -313,8 +339,8 @@ const renderRecommendations = (footprint) => {
     .map(
       (rec) => `
     <div class="card card--recommendation">
-      <h3>${t(rec.id + "_title", rec.title)}</h3>
-      <p>${t(rec.id + "_desc", rec.description)}</p>
+      <h3>${t(`${rec.id}_title`, rec.title)}</h3>
+      <p>${t(`${rec.id}_desc`, rec.description)}</p>
       <div class="card__meta">
         <span class="badge badge--${rec.difficulty}">${t(rec.difficulty)}</span>
         <span class="badge badge--impact">${t("savesLabel")} ${rec.estimatedSavingKgPerMonth} ${t("kgPerMonth")}</span>
@@ -383,8 +409,8 @@ const renderChallenges = () => {
     <div class="card card--challenge" id="ch_${ch.id}">
       <div class="card__icon">${ch.icon}</div>
       <div class="card__content">
-        <h3>${t(ch.id + "_title", ch.title)}</h3>
-        <p>${t(ch.id + "_desc", ch.description)}</p>
+        <h3>${t(`${ch.id}_title`, ch.title)}</h3>
+        <p>${t(`${ch.id}_desc`, ch.description)}</p>
         <button class="btn btn--small" data-challenge-id="${ch.id}">${t("completeBtn")} (${ch.points} ${t("ptsLabel")})</button>
       </div>
     </div>
@@ -398,69 +424,148 @@ const renderChallenges = () => {
 const handleChallengeCompletion = (id) => {
   const result = completeChallengeAction(id);
   if (result.success) {
-    const messages = [
-      `${t("challengeCompletedAlert")} ${result.pointsAwarded} ${t("pointsLabel")}.`,
-    ];
-
-    if (result.newlyEarnedBadges && result.newlyEarnedBadges.length > 0) {
-      messages.push(
-        `${t("badgeEarnedAlertPrefix")} ${t(
-          result.newlyEarnedBadges[0].id + "_name",
-          result.newlyEarnedBadges[0].name,
-        )}`,
-      );
-    }
-    alert(messages.join("\n"));
+    showChallengePopup(result);
     renderChallenges();
+    refreshFootprintSections();
   }
+};
+
+const createElement = (tagName, className, textContent = "") => {
+  const element = document.createElement(tagName);
+  if (className) element.className = className;
+  if (textContent) element.textContent = textContent;
+  return element;
+};
+
+const dismissChallengePopup = () => {
+  const popupEl = document.querySelector(".challenge-popup");
+  if (!popupEl) return;
+
+  popupEl.classList.add("challenge-popup--leaving");
+  const removePopup = () => popupEl.remove();
+  popupEl.addEventListener("animationend", removePopup, { once: true });
+  window.setTimeout(removePopup, 250);
+
+  if (challengePopupPreviousFocus?.focus) {
+    challengePopupPreviousFocus.focus();
+  }
+  challengePopupPreviousFocus = null;
+};
+
+const removeChallengePopups = () => {
+  document.querySelectorAll(".challenge-popup").forEach((popupEl) => {
+    popupEl.remove();
+  });
+};
+
+const showChallengePopup = (result) => {
+  removeChallengePopups();
+
+  const newlyEarnedBadges = result.newlyEarnedBadges || [];
+  const fallbackTitle = t("challengeCompletedAlert").split("!")[0];
+
+  const popupEl = createElement("div", "challenge-popup");
+  popupEl.dataset.action = "close-popup-overlay";
+  popupEl.setAttribute("role", "dialog");
+  popupEl.setAttribute("aria-modal", "true");
+  popupEl.setAttribute("aria-labelledby", "challenge-popup-title");
+  popupEl.setAttribute("aria-describedby", "challenge-popup-copy");
+
+  const panelEl = createElement("div", "challenge-popup__panel");
+  const iconEl = createElement("div", "challenge-popup__icon", "✓");
+  iconEl.setAttribute("aria-hidden", "true");
+
+  const titleEl = createElement(
+    "h3",
+    "challenge-popup__title",
+    t("challengeCompletedTitle", fallbackTitle),
+  );
+  titleEl.id = "challenge-popup-title";
+
+  const copyEl = createElement(
+    "p",
+    "challenge-popup__copy",
+    `${t("challengeCompletedAlert")} ${result.pointsAwarded} ${t("pointsLabel")}.`,
+  );
+  copyEl.id = "challenge-popup-copy";
+
+  panelEl.append(iconEl, titleEl, copyEl);
+
+  if (newlyEarnedBadges.length > 0) {
+    const badgeListEl = createElement("div", "challenge-popup__badge-list");
+    badgeListEl.setAttribute("aria-label", t("badgeEarnedAlertPrefix"));
+
+    for (const badge of newlyEarnedBadges) {
+      const badgeWrapEl = createElement("div", "challenge-popup__badge-card");
+      const badgeImageEl = createElement("img", "challenge-popup__badge-image");
+      const badgeName = t(`${badge.id}_name`, badge.name);
+      badgeImageEl.src = getBadgeImageSrc(badge);
+      badgeImageEl.alt = badgeName;
+      badgeImageEl.width = 72;
+      badgeImageEl.height = 72;
+
+      const badgeTextEl = createElement(
+        "p",
+        "challenge-popup__badge",
+        `${t("badgeEarnedAlertPrefix")} ${badgeName}`,
+      );
+      badgeWrapEl.append(badgeImageEl, badgeTextEl);
+      badgeListEl.appendChild(badgeWrapEl);
+    }
+
+    panelEl.appendChild(badgeListEl);
+  }
+
+  const closeButtonEl = createElement(
+    "button",
+    "btn challenge-popup__button",
+    t("challengePopupAction", t("completeBtn", "Continue")),
+  );
+  closeButtonEl.type = "button";
+  closeButtonEl.dataset.action = "close-toast";
+  closeButtonEl.setAttribute("aria-label", t("closePopupLabel", "Close popup"));
+  panelEl.appendChild(closeButtonEl);
+
+  popupEl.appendChild(panelEl);
+  challengePopupPreviousFocus = document.activeElement;
+  document.body.appendChild(popupEl);
+  closeButtonEl.focus();
 };
 
 /**
  * Renders Maps Links
  */
-const renderMapsLinks = () => {
-  if (!DOM.mapsContainer) return;
-  const links = getAllEcoMapLinks();
-
+const renderActionLinks = (section) => {
+  const config = ACTION_LINK_SECTION_CONFIG[section];
+  const containerEl = config?.container();
+  if (!containerEl) return;
+  const links = config.links();
   const html = links
     .map(
       (link) => `
     <a href="${link.url}" target="_blank" rel="noopener noreferrer" class="card card--link">
       <div class="card__icon">${link.icon}</div>
       <div>
-        <h4>${t(link.id + "_title", link.label)}</h4>
-        <p class="text-small">${t(link.id + "_desc", link.description)}</p>
+        <h4>${t(`${link.id}_title`, link.label)}</h4>
+        <p class="text-small">${t(`${link.id}_desc`, link.description)}</p>
       </div>
     </a>
   `,
     )
     .join("");
 
-  DOM.mapsContainer.innerHTML = html;
+  containerEl.innerHTML = html;
+};
+
+const renderMapsLinks = () => {
+  renderActionLinks("maps");
 };
 
 /**
  * Renders Calendar Links
  */
 const renderCalendarLinks = () => {
-  if (!DOM.calendarContainer) return;
-  const links = getAllCalendarReminders();
-
-  const html = links
-    .map(
-      (link) => `
-    <a href="${link.url}" target="_blank" rel="noopener noreferrer" class="card card--link">
-      <div class="card__icon">${link.icon}</div>
-      <div>
-        <h4>${t(link.id + "_title", link.label)}</h4>
-        <p class="text-small">${t(link.id + "_desc", link.description)}</p>
-      </div>
-    </a>
-  `,
-    )
-    .join("");
-
-  DOM.calendarContainer.innerHTML = html;
+  renderActionLinks("calendar");
 };
 
 /**

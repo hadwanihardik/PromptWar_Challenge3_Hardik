@@ -14,7 +14,7 @@ import { loadState, updateStateKey } from "./storage.js";
 const addGoal = (title, targetValue, metric) => {
   const state = loadState();
   const newGoal = {
-    id: "goal_" + Date.now(),
+    id: `goal_${Date.now()}`,
     title,
     targetValue: Number(targetValue),
     metric,

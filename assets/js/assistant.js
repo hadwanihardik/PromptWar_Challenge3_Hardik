@@ -8,7 +8,7 @@ import { askGemini } from "./gemini.js";
 import { loadState } from "./storage.js";
 import { t } from "./i18n.js";
 
-let conversationHistory = [];
+const conversationHistory = [];
 let messageIdCounter = 0;
 
 /**
@@ -53,17 +53,17 @@ const initAssistant = (chatContainerEl, formEl, inputEl) => {
       // 3. Replace typing indicator with actual response
       updateMessageInUI(chatContainerEl, typingId, response.text);
     } catch (err) {
-      updateMessageInUI(
-        chatContainerEl,
-        typingId,
-        t("assistantError"),
-      );
+      updateMessageInUI(chatContainerEl, typingId, t("assistantError"));
     }
   });
 };
 
 const addAssistantGreeting = (chatContainerEl) => {
-  const id = addMessageToUI(chatContainerEl, "assistant", t("assistantGreeting"));
+  const id = addMessageToUI(
+    chatContainerEl,
+    "assistant",
+    t("assistantGreeting"),
+  );
   const el = chatContainerEl.querySelector(`#${id}`);
   if (el) {
     el.dataset.assistantGreeting = "true";

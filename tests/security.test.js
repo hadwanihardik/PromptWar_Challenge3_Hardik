@@ -10,10 +10,13 @@ describe("Security hardening", () => {
     expect(indexHtml).toContain("Content-Security-Policy");
     expect(indexHtml).toContain("default-src 'self'");
     expect(indexHtml).toContain("script-src 'self'");
-    expect(indexHtml).toContain("connect-src 'self' https://generativelanguage.googleapis.com");
+    expect(indexHtml).toContain(
+      "connect-src 'self' https://generativelanguage.googleapis.com",
+    );
     expect(indexHtml).toContain("object-src 'none'");
     expect(indexHtml).toContain("base-uri 'self'");
     expect(indexHtml).toContain("frame-ancestors 'none'");
+    expect(indexHtml).not.toContain("upgrade-insecure-requests");
   });
 
   it("keeps interaction wiring out of inline handlers", () => {

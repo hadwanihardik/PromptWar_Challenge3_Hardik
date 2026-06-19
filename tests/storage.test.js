@@ -4,6 +4,7 @@ import {
   saveState,
   resetState,
   updateStateKey,
+  updatePreferences,
 } from "../assets/js/storage.js";
 
 describe("Storage Module", () => {
@@ -42,5 +43,17 @@ describe("Storage Module", () => {
     resetState();
     const state = loadState();
     expect(state.totalPoints).toBe(0);
+  });
+
+  it("should merge preferences without dropping existing values", () => {
+    updatePreferences({ theme: "dark" });
+    updatePreferences({ language: "hi" });
+
+    const state = loadState();
+    expect(state.preferences).toMatchObject({
+      difficulty: "easy",
+      theme: "dark",
+      language: "hi",
+    });
   });
 });

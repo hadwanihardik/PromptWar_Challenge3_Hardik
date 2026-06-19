@@ -1,5 +1,19 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { loadState } from "../assets/js/storage.js";
+import { loadState, saveState } from "../assets/js/storage.js";
+
+const footprint = {
+  monthlyTotal: 420,
+  yearlyTotal: 5040,
+  ecoScore: 68,
+  topCategory: "transport",
+  categories: {
+    transport: 180,
+    energy: 120,
+    food: 80,
+    shopping: 30,
+    waste: 10,
+  },
+};
 
 const renderAppShell = () => {
   document.body.innerHTML = `
@@ -57,12 +71,15 @@ describe("Challenge interactions", () => {
     vi.restoreAllMocks();
   });
 
-  it("completes a rendered challenge with one combined alert", async () => {
+  it("completes a rendered challenge with an on-screen popup", async () => {
+    saveState({ ...loadState(), footprint });
     vi.resetModules();
     await import("../assets/js/app.js");
     document.dispatchEvent(new Event("DOMContentLoaded"));
 
-    const challengeButton = document.querySelector("[data-challenge-id]");
+    const challengeButton = document.querySelector(
+      "[data-challenge-id='ch_t4']",
+    );
     expect(challengeButton).not.toBeNull();
 
     const challengeId = challengeButton.dataset.challengeId;
@@ -71,6 +88,25 @@ describe("Challenge interactions", () => {
     const state = loadState();
     expect(state.completedChallenges).toContain(challengeId);
     expect(state.totalPoints).toBeGreaterThan(0);
-    expect(window.alert).toHaveBeenCalledTimes(1);
+    expect(window.alert).not.toHaveBeenCalled();
+
+    const popup = document.querySelector(".challenge-popup");
+    expect(popup).not.toBeNull();
+    expect(popup.getAttribute("role")).toBe("dialog");
+    expect(popup.getAttribute("aria-modal")).toBe("true");
+    expect(popup.textContent).toContain("Challenge completed");
+    expect(
+      document.querySelectorAll(".challenge-popup__badge-image"),
+    ).toHaveLength(3);
+    expect(popup.textContent).toContain("First Step");
+    expect(popup.textContent).toContain("Century Saver");
+    expect(popup.textContent).toContain("Carbon Cutter");
+    expect(document.querySelector(".badge-card__image")).not.toBeNull();
+    expect(
+      document.querySelector("#dashboard-container").textContent,
+    ).toContain("First Step");
+
+    document.querySelector("[data-action='close-toast']").click();
+    expect(document.querySelector(".challenge-popup--leaving")).not.toBeNull();
   });
 });

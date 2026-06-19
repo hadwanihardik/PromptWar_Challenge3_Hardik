@@ -10,7 +10,25 @@
     "sourceType": "module"
   },
   "rules": {
-    "no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
-    "no-console": "off"
+    "array-callback-return": "error",
+    "block-scoped-var": "error",
+    "curly": ["error", "multi-line"],
+    "default-case-last": "error",
+    "eqeqeq": ["error", "always"],
+    "no-alert": "off",
+    "no-console": ["warn", { "allow": ["warn", "error"] }],
+    "no-else-return": "error",
+    "no-eval": "error",
+    "no-implied-eval": "error",
+    "no-new-func": "error",
+    "no-script-url": "error",
+    "no-shadow": "warn",
+    "no-unneeded-ternary": "error",
+    "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "no-useless-return": "error",
+    "no-var": "error",
+    "object-shorthand": ["error", "always"],
+    "prefer-const": "error",
+    "prefer-template": "error"
   }
 }

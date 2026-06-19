@@ -6,9 +6,42 @@
 
 import { getEcoProfile } from "./recommendations.js";
 import { t } from "./i18n.js";
+import { loadState } from "./storage.js";
+import BADGES from "./data/badges.js";
 
 const TOP_CATEGORY_REDUCTION_RATE = 0.1;
 const PETROL_CAR_KG_CO2_PER_KM = 0.192;
+const DEFAULT_BADGE_COLOR = "#1f9d55";
+const HEX_COLOR_PATTERN = /^#[0-9a-f]{6}$/i;
+
+const escapeSvgText = (value = "") => {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
+};
+
+const getBadgeImageSrc = (badge) => {
+  const badgeColor = HEX_COLOR_PATTERN.test(badge.color)
+    ? badge.color
+    : DEFAULT_BADGE_COLOR;
+  const badgeIcon = escapeSvgText(badge.icon);
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="112" height="112" viewBox="0 0 112 112" role="img">
+      <defs>
+        <radialGradient id="shine" cx="35%" cy="25%" r="70%">
+          <stop offset="0" stop-color="#ffffff" stop-opacity="0.9"/>
+          <stop offset="0.45" stop-color="${badgeColor}" stop-opacity="0.95"/>
+          <stop offset="1" stop-color="${badgeColor}" stop-opacity="1"/>
+        </radialGradient>
+      </defs>
+      <circle cx="56" cy="56" r="50" fill="url(#shine)" stroke="#ffffff" stroke-width="6"/>
+      <circle cx="56" cy="56" r="40" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="3"/>
+      <text x="56" y="68" text-anchor="middle" font-size="36" font-family="Apple Color Emoji, Segoe UI Emoji, sans-serif">${badgeIcon}</text>
+    </svg>
+  `;
+  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+};
 
 const getDashboardInsights = (footprint) => {
   const topValue = footprint.categories[footprint.topCategory] || 0;
@@ -22,6 +55,61 @@ const getDashboardInsights = (footprint) => {
     equivalentCarKm,
     nextActionKey: `nextAction_${footprint.topCategory}`,
   };
+};
+
+const getEarnedBadges = () => {
+  const state = loadState();
+  const earnedBadgeIds = new Set(state.earnedBadges || []);
+  return BADGES.filter((badge) => earnedBadgeIds.has(badge.id));
+};
+
+const renderBadges = () => {
+  const earnedBadges = getEarnedBadges();
+  const badgeCountLabel = t("badgesEarnedCount", "earned");
+
+  if (earnedBadges.length === 0) {
+    return `
+      <section class="dashboard__card dashboard__badges" aria-labelledby="dashboard-badges-title">
+        <div class="dashboard__section-header">
+          <div>
+            <h3 id="dashboard-badges-title">${t("badgesTitle", "Earned Badges")}</h3>
+            <p class="dashboard__section-copy">${t("badgesEmpty", "Complete eco challenges to unlock badge images here.")}</p>
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  const badgesHTML = earnedBadges
+    .map((badge) => {
+      const badgeName = t(`${badge.id}_name`, badge.name);
+      const badgeDescription = t(`${badge.id}_desc`, badge.description);
+
+      return `
+        <article class="badge-card">
+          <img class="badge-card__image" src="${getBadgeImageSrc(badge)}" alt="${badgeName}" width="72" height="72" loading="lazy" />
+          <div class="badge-card__body">
+            <h4 class="badge-card__title">${badgeName}</h4>
+            <p class="badge-card__copy">${badgeDescription}</p>
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+
+  return `
+    <section class="dashboard__card dashboard__badges" aria-labelledby="dashboard-badges-title">
+      <div class="dashboard__section-header">
+        <div>
+          <h3 id="dashboard-badges-title">${t("badgesTitle", "Earned Badges")}</h3>
+          <p class="dashboard__section-copy">${earnedBadges.length} ${badgeCountLabel}</p>
+        </div>
+      </div>
+      <div class="badge-gallery">
+        ${badgesHTML}
+      </div>
+    </section>
+  `;
 };
 
 /**
@@ -58,11 +146,8 @@ const renderDashboard = (footprint, containerEl) => {
   `;
 
   // 2. Profile insights
-  const profileLabel = t("profile_" + topCategory + "_label", profile.label);
-  const profileDesc = t(
-    "profile_" + topCategory + "_desc",
-    profile.description,
-  );
+  const profileLabel = t(`profile_${topCategory}_label`, profile.label);
+  const profileDesc = t(`profile_${topCategory}_desc`, profile.description);
   const profileHTML = `
     <div class="dashboard__profile">
       <h3>${t("profileTitle")}: ${profile.icon} ${profileLabel}</h3>
@@ -110,6 +195,7 @@ const renderDashboard = (footprint, containerEl) => {
     ${headerHTML}
     ${insightsHTML}
     ${profileHTML}
+    ${renderBadges()}
     <div class="dashboard__card">
       <h3>${t("dashCategoryTitle")}</h3>
       ${barsHTML}
@@ -117,4 +203,4 @@ const renderDashboard = (footprint, containerEl) => {
   `;
 };
 
-export { renderDashboard, getDashboardInsights };
+export { renderDashboard, getDashboardInsights, getBadgeImageSrc };

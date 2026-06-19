@@ -84,6 +84,25 @@ const updateStateKey = (key, value) => {
 };
 
 /**
+ * Updates saved user preferences while preserving existing preference values.
+ * @param {Object} preferences - Preference keys to merge into state.preferences
+ * @returns {Object} Updated full state
+ */
+const updatePreferences = (preferences) => {
+  const current = loadState();
+  const updated = {
+    ...current,
+    preferences: {
+      ...getDefaultState().preferences,
+      ...current.preferences,
+      ...preferences,
+    },
+  };
+  saveState(updated);
+  return updated;
+};
+
+/**
  * Saves a new footprint result, maintaining a rolling history of last 12 entries.
  * @param {Object} footprintResult - Result from Calculator.calculateTotal()
  * @returns {Object} Updated full state
@@ -157,6 +176,7 @@ export {
   saveState,
   resetState,
   updateStateKey,
+  updatePreferences,
   saveFootprintResult,
   completeChallenge,
   earnBadge,
